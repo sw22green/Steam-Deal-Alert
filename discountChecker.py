@@ -50,21 +50,20 @@ def checkPrice(url):
     
     options = Options()
     options.add_argument("--headless=new")
-    driver = webdriver.Chrome(options=options)
+    browser = webdriver.Chrome(options=options)
 
-    driver.get(url)
-    html = driver.page_source.encode('utf-8').strip()
+    browser.get(url)
+    html = browser.page_source.encode('utf-8').strip()
     soup1 = BeautifulSoup(html, 'lxml')
-    soup2 = BeautifulSoup(soup1.prettify(), 'lxml')
     try:
-        item = (soup2.find(id='title').get_text()).strip()
+        item = (soup.find(id='title').get_text()).strip()
     except:
         item = "Could not load product name"
     try:
-        price = soup2.find(id = 'tp_price_block_total_price_ww').find('span', {'class': 'a-offscreen'}).text.strip()
+        price = soup.find(id = 'tp_price_block_total_price_ww').find('span', {'class': 'a-offscreen'}).text.strip()
     except:
         price = "Could not load price"
-    driver.close()
+    browser.close()
 
     itemList = list(filter(None, readFile(WRITE_FILE)))
     if item in itemList: 
