@@ -1,33 +1,31 @@
-from bs4 import BeautifulSoup
-import time
+from requests_html import HTMLSession
 from email.message import EmailMessage
 import ssl
 import smtplib
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
 
-# Amazon links for wishlist items
-LINKS = "/Users/Wang/Desktop/WishList Links.txt"
-# File that will include product name and price
-WRITE_FILE = "/Users/Wang/Desktop/WishList Items and Prices.txt"
 
-def discountChecker():
+# Steam links for wishlist games
+LINKS_FILE = "/Users/Wang/Desktop/WishList Links.txt"
+# File that will include game name and price
+WRITE_FILE = "/Users/Wang/Desktop/WishList Games and Prices.txt"
+
+def discountChecker(linksFile, writeFile):
     """
-    Given amazon links in a file, writes out the names and prices of the products
-    in a separate file.  If the price of a product has decreased, an email will
-    be sent to notify.
+    Given steam links in a file, writes out the names, prices, and/or discount 
+    of the games in a separate file.  If the price of a game has decreased, an 
+    email will be sent to notify.
     """
 
-    urlList = list(filter(None, readFile(LINKS)))
+    urlList = list(filter(None, readFile(linksFile)))
     dict = {}
 
     for url in urlList:
         dict.update(checkPrice(url))
     
-    clearFile(WRITE_FILE)
+    clearFile(writeFile)
 
-    for item in dict:
-        writePrices(WRITE_FILE, item, dict[item])
+    for game in dict:
+        writePrices(writeFile, game, dict[game])
 
 def readFile(file):
     """
@@ -40,42 +38,39 @@ def readFile(file):
         data = file.read() 
     return data.split('\n')
 
-def checkPrice(url):
+def checkPrice(url): 
     """
-    Returns a dictionary containing the name and price of the product from the url.
+    Returns a dictionary containing the name and price of the game from the url.
     Compares the current price to the previous price and sends an email if the current price is lower
 
-    Parameter url(string): the url of the product on amazon
+    Parameter url(string): the url of the game on steam
     """
+    session = HTMLSession()
+    response = session.get(url)
+    html = response.html
     
-    options = Options()
-    # Runs chrome without opening browser
-    options.add_argument("--headless=new")
-    # Removes Navigator.Webdriver Flag
-    options.add_argument('--disable-blink-features=AutomationControlled')
-    # Using a User-Agent
-    options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36")
-    browser = webdriver.Chrome(options=options)
+    gameName = html.find(".apphub_AppName", first = True).text
 
-    browser.get(url)
-    html = browser.page_source.encode('utf-8').strip()
-    soup1 = BeautifulSoup(html, 'lxml')
-    try:
-        item = (soup.find(id='title').get_text()).strip()
-    except:
-        item = "Could not load product name"
-    try:
-        price = soup.find(id = 'tp_price_block_total_price_ww').find('span', {'class': 'a-offscreen'}).text.strip()
-    except:
-        price = "Could not load price"
-    browser.close()
+    priceElement = html.find('[data-price-final]', first = True)
+    price = float(priceElement.attrs['data-price-final'])/100
 
-    itemList = list(filter(None, readFile(WRITE_FILE)))
-    if item in itemList: 
-        prevPrice = itemList[itemList.index(item) + 1]
-        if prevPrice>price: email(url, item, price, prevPrice)
+    discountCountdownElement = html.find('.game_purchase_discount_countdown', first = True)
+    if(discountCountdownElement is None): discountCountdown = "No discount"
+    else: discountCountdown = discountCountdownElement.text + ": "
 
-    return {item:price}
+    discountPercentElement = html.find('.discount_pct', first = True)
+    if(discountPercentElement is None): discountPercent = ""
+    else: discountPercent = discountPercentElement.text
+    
+    gamePrice = "$" + str(price) + ", " + discountCountdown + discountPercent
+
+    gameList = list(filter(None, readFile(WRITE_FILE)))
+    if gameName in gameList: 
+        prevPrice = gameList[gameList.index(gameName) + 1]
+        prevPrice = float(prevPrice[prevPrice.index("$")+1: prevPrice.index(".")+3])
+        if prevPrice>price: email(url, gameName, price, prevPrice)
+
+    return {gameName:gamePrice}
 
 def clearFile(file):
     """
@@ -88,35 +83,35 @@ def clearFile(file):
     f.write("")
     f.close()
 
-def writePrices(file, item, price):
+def writePrices(file, game, price):
     """
-    Writes the name of the item followed by the price in a new line.
+    Writes the name of the game followed by the price in a new line.
 
     Parameter file(string): the location of the file to write to
 
-    Parameter item(string): the name of the product
+    Parameter game(string): the name of the game
 
-    Parameter price(string): the price of the product
+    Parameter price(string): the price of the game
     """
 
     f = open(file, 'a')
-    f.write(item+"\n")
+    f.write(game+"\n")
     f.write(price+"\n")
     f.write("\n")
     f.close()
 
-def email(url, item, price, prevPrice):
+def email(url, game, price, prevPrice):
     """
-    Sends an email with the link of the product, the product name, the previous price,
+    Sends an email with the link of the game, the game name, the previous price,
     and the current price.
 
-    Parameter url(string): the url of the product
+    Parameter url(string): the url of the game
 
-    Parameter item(string): the name of the product
+    Parameter game(string): the name of the game
 
-    Parameter price(string): the price of the product
+    Parameter price(string): the price of the game
 
-    Parameter prevPrice(string): the price of the product from the last time the program was run
+    Parameter prevPrice(string): the price of the game from the last time the program was run
     """
 
     sender = "sw22green@gmail.com"
@@ -124,7 +119,7 @@ def email(url, item, price, prevPrice):
     receiver = "sw22green@gmail.com"
 
     subject = "Price Drop!"
-    body = url + "\nThe price of " + item + " has dropped from " + prevPrice + " to " + price + "!"
+    body = url + "\nThe price of " + game + " has dropped from " + prevPrice + " to " + price + "!"
 
     em = EmailMessage()
     em['From'] = sender
@@ -136,12 +131,6 @@ def email(url, item, price, prevPrice):
 
     with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as smtp:
         smtp.login(sender, password)
-        smtp.sendmail(sender, receiver, em.as_string())
+        smtp.sendmail(sender, receiver, em.as_string())    
 
-while(True):
-    """
-    Runs the program once a day
-    """
-
-    discountChecker()
-    time.sleep(86400)
+discountChecker(LINKS_FILE, WRITE_FILE)
