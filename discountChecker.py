@@ -49,10 +49,13 @@ def checkPrice(url):
     response = session.get(url)
     html = response.html
     
-    gameName = html.find(".apphub_AppName", first = True).text
+    gameElement = html.find(".apphub_AppName", first = True)
+    if(gameElement is None): gameName = "Failed to get game name"
+    else: gameName = gameElement.text
 
     priceElement = html.find('[data-price-final]', first = True)
-    price = float(priceElement.attrs['data-price-final'])/100
+    if(priceElement is None): price = "Failed to get price"
+    else: price = float(priceElement.attrs['data-price-final'])/100
 
     discountCountdownElement = html.find('.game_purchase_discount_countdown', first = True)
     if(discountCountdownElement is None): discountCountdown = "No discount"
