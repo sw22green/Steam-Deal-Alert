@@ -3,6 +3,10 @@ from email.message import EmailMessage
 import ssl
 import smtplib
 
+"""
+Name: Sheng Wang
+"""
+
 # Steam links for wishlist games
 # Replace with path to links file
 LINKS_FILE = "xxxxxxxxxxxxxxxxxxx"
