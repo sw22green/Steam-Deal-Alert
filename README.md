@@ -12,7 +12,7 @@ A program that obtains the names, prices, and discount information of games you 
 - Running the program
   - Recommend using Windows Task Scheduler(windows) or cronjob(macOS and Linux) to run the program in the background.
     -https://medium.com/analytics-vidhya/easiest-way-to-run-a-python-script-in-the-background-4aada206cf29#:~:text=The%20easiest%20way%20of%20running,can%20use%20Windows%20Task%20Scheduler.&text=You%20can%20then%20give%20the,by%20giving%20the%20time%20particulars.
-- Disclaimer: Program does not work for games that require age verification
+- Disclaimer: Data will not load for games that require age verification
 
 # What I learned
 - Web scraping
