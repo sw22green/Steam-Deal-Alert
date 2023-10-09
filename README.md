@@ -10,7 +10,7 @@ A program that obtains the names, prices, and discount information of games you 
     - https://support.google.com/accounts/answer/185833?sjid=8523303725147904486-NA
   - receiver: a Gmail account that will be receiving the email notification
 - Running the program
-  - Recommend using Windows Task Scheduler(windows) or cronjob(macOS and Linux) to run the program in the background.
+  - Recommend using Windows Task Scheduler(windows) or cronjob(macOS and Linux) to run the program in the background once a day.
     -https://medium.com/analytics-vidhya/easiest-way-to-run-a-python-script-in-the-background-4aada206cf29#:~:text=The%20easiest%20way%20of%20running,can%20use%20Windows%20Task%20Scheduler.&text=You%20can%20then%20give%20the,by%20giving%20the%20time%20particulars.
 - Disclaimer: Data will not load for games that require age verification
 
