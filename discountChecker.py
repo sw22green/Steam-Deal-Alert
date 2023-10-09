@@ -3,11 +3,12 @@ from email.message import EmailMessage
 import ssl
 import smtplib
 
-
 # Steam links for wishlist games
-LINKS_FILE = "/Users/Wang/Desktop/WishList Links.txt"
+# Replace with path to links file
+LINKS_FILE = "xxxxxxxxxxxxxxxxxxx"
 # File that will include game name and price
-WRITE_FILE = "/Users/Wang/Desktop/WishList Games and Prices.txt"
+# Replace with path to file that will contain output
+WRITE_FILE = "xxxxxxxxxxxxxxxxxxx"
 
 def discountChecker(linksFile, writeFile):
     """
@@ -117,23 +118,28 @@ def email(url, game, price, prevPrice):
     Parameter prevPrice(string): the price of the game from the last time the program was run
     """
 
-    sender = "sw22green@gmail.com"
-    password = "vibxhnfyqpcvmacv"
-    receiver = "sw22green@gmail.com"
-
+    #Replace with your own gmail 
+    sender = "xxxxxxxxx@gmail.com"
+    #Replace with your own app password(Link In README)
+    password = "xxxxxxxxxxxx"
+    #Replace with your own gmail 
+    receiver = "xxxxxxxxx@gmail.com"
+    #For SSL connection
+    port = 465
+    
     subject = "Price Drop!"
     body = url + "\nThe price of " + game + " has dropped from " + prevPrice + " to " + price + "!"
 
-    em = EmailMessage()
-    em['From'] = sender
-    em['To'] = receiver
-    em['subject'] = subject
-    em.set_content(body)
+    msg = EmailMessage()
+    msg['From'] = sender
+    msg['To'] = receiver
+    msg['subject'] = subject
+    msg.set_content(body)
 
     context = ssl.create_default_context()
 
-    with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as smtp:
+    with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as smtp:
         smtp.login(sender, password)
-        smtp.sendmail(sender, receiver, em.as_string())    
+        smtp.sendmail(sender, receiver, msg.as_string())    
 
 discountChecker(LINKS_FILE, WRITE_FILE)
