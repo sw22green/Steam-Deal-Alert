@@ -1,3 +1,4 @@
+import os
 from requests_html import HTMLSession
 from email.message import EmailMessage
 import ssl
@@ -20,7 +21,9 @@ def discountChecker(linksFile, writeFile):
     of the games in a separate file.  If the price of a game has decreased, an 
     email will be sent to notify.
     """
-
+    assert(os.path.exists(linksFile))
+    assert(os.path.exists(writeFile))
+    
     urlList = list(filter(None, readFile(linksFile)))
     dict = {}
 
@@ -38,7 +41,8 @@ def readFile(file):
 
     Parameter file(string): the location of the file to be read
     """
-
+    assert(os.path.exists(file))
+    
     with open(file, "r") as file:
         data = file.read() 
     return data.split('\n')
@@ -86,7 +90,8 @@ def clearFile(file):
 
     Parameter file(string): the location of the file to be cleared
     """
-
+    assert(os.path.exists(file))
+    
     f = open(file, 'w')
     f.write("")
     f.close()
@@ -101,7 +106,8 @@ def writePrices(file, game, price):
 
     Parameter price(string): the price of the game
     """
-
+    assert(os.path.exists(file))
+    
     f = open(file, 'a')
     f.write(game+"\n")
     f.write(price+"\n")
