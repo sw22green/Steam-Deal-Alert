@@ -131,10 +131,11 @@ def email(url: str, game_name: str, game_price: str, prev_price: str) -> None:
     - game_price (str): The price of the game.
     - prev_price (str): The price of the game from the last time the program was run.
     """
-
-    sender = "sw22green@gmail.com"
-    password = "vibxhnfyqpcvmacv"
-    receiver = "sw22green@gmail.com"
+    
+    #Replace with your information for personal use
+    sender = "xxxxx@gmail.com"
+    password = "xxxxxxxxxxx"
+    receiver = "xxxxx@gmail.com"
     # For SSL connection
     port = 465
 
