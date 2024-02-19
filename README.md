@@ -3,8 +3,6 @@ A program that obtains the names, prices, and discount information of games you 
 
 # How to use
 - Replace "xxxxxxxx" in the code with your own relevant information
-  - LINKS_FILE: path to the file containing the links of your Steam games wishlist.
-  - WRITE_FILE: path to the file you want the program to write all the data into.
   - sender: a Gmail account that will be sending you the email notification
   - password: personalized app password from the sender Gmail.
     - https://support.google.com/accounts/answer/185833?sjid=8523303725147904486-NA
