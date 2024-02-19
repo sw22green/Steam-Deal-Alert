@@ -2,6 +2,10 @@
 A program that obtains the names, prices, and discount information of games you want from Steam. If a price drop has been detected or if a deal will end in less than 24hrs, an email will be sent to notify you.
 
 # How to use
+- Install Python
+  - Make sure you have Python installed on your system. You can download from the official Python website.
+- Install the 'requests_html' library
+  - Open a terminal or command prompt and run the following command to install the necessary library: pip install requests-html
 - Replace "xxxxxxxx" in the code with your own relevant information
   - sender: a Gmail account that will be sending you the email notification
   - password: personalized app password from the sender Gmail.
